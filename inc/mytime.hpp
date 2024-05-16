@@ -6,11 +6,10 @@
 class Time
 {
 private:
-    unsigned int mins; // минуты с 00:00
+    unsigned int mins = 0; // минуты с 00:00
 
 public:
-    Time() = default;
-    Time(unsigned int time);
+    Time(unsigned int time = 0);
     Time(const std::string& time); // получает на вход время в формате hh:mm
 
     // Если левый аргумент меньше правого, предполагается что сменился день  

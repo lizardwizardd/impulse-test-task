@@ -15,6 +15,8 @@ add_library(class_computerclub STATIC
     src/computerclub.cpp
     src/filebuffer.cpp
     src/mytime.cpp
+    src/eventin.cpp
+    src/eventout.cpp
 )
 target_include_directories(class_computerclub PUBLIC include)
 

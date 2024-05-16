@@ -4,6 +4,8 @@
 #include <exception>
 
 #include "../inc/mytime.hpp"
+#include "../inc/eventin.hpp"
+#include "../inc/eventout.hpp"
 
 
 ComputerClub::ComputerClub(const std::string& filename) :
@@ -23,10 +25,15 @@ ComputerClub::ComputerClub(const std::string& filename) :
 
 void ComputerClub::run()
 {
-    std::cout << tablesCount << " " << openTime << " " << closeTime << " " << costPerHour << '\n';
+    std::cout << openTime << '\n';
 
     while (buffer.readInputLine())
     {
-        std::cout << buffer.getBuffer() << '\n';
+        EventIn eventIn(this, buffer.getBuffer());
+        std::cout << eventIn << '\n';
+        EventOut eventOut = eventIn.execute();
+        std::cout << eventOut << '\n';
     }
+
+    std::cout << closeTime << '\n';
 }
