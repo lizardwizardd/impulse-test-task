@@ -16,7 +16,9 @@ public:
     EventOut(ComputerClub* computerClub, Time eventTime = Time(),
              TypeOut eventType = TypeOut::UNKNOWN);
 
+    bool needToExecute() const;
     void execute();
+    void print() const;
 
     friend std::ostream& operator<<(std::ostream& out, const EventOut& event);
 };

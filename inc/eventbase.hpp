@@ -8,7 +8,7 @@ class EventBase
 {
 protected:
     Time eventTime;
-    ComputerClub* computerClub;
+    ComputerClub* computerClub = nullptr;
 
     enum class TypeIn
     {

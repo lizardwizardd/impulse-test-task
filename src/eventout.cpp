@@ -25,6 +25,11 @@ void EventOut::execute()
     }
 }
 
+void EventOut::print() const
+{
+    std::cout << *this << "\n";
+}
+
 void EventOut::executeClientLeftEndOfDay() const
 {
 
@@ -37,7 +42,12 @@ void EventOut::executeClientOccupiedTableQueue() const
 
 void EventOut::executeError() const
 {
-    
+
+}
+
+bool EventOut::needToExecute() const
+{
+    return eventType != TypeOut::NO_EVENT && eventType != TypeOut::UNKNOWN;
 }
 
 std::ostream& operator<<(std::ostream& out, const EventOut& event)

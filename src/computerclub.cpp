@@ -20,15 +20,15 @@ ComputerClub::ComputerClub(const std::string& filename) :
 
     try
     {
-        buffer.readInputLine(); // считать количество столов
+        buffer.readInputLine(); // количество столов
         tablesCount = std::stoi(buffer.getBuffer());
 
-        buffer.readInputLine(); // считать время начала и конца работы
+        buffer.readInputLine(); // время начала и конца работы
         std::string workTimeLine = buffer.getBuffer();
         openTime = Time(workTimeLine.substr(0, workTimeLine.find(' ')));
         closeTime = Time(workTimeLine.substr(workTimeLine.find(' ') + 1, workTimeLine.size()));
 
-        buffer.readInputLine(); // считать стоимость часа
+        buffer.readInputLine(); // стоимость часа
         costPerHour = std::stoi(buffer.getBuffer());
     }
     catch(const std::exception& e)
@@ -49,16 +49,22 @@ void ComputerClub::run()
 
     while (buffer.readInputLine())
     {
-        try
-        {
-            EventIn eventIn(this, buffer.getBuffer());
-            std::cout << eventIn << '\n';
-            EventOut eventOut = eventIn.execute();
-        }
-        catch(const ParseException& e)
-        {
+        EventIn eventIn(this);
+        
+        try {
+            eventIn.parseLine(buffer.getBuffer());
+        } catch(const ParseException& e) {
             std::cout << "Error while parsing: " << e.what() << '\n'
-                      << "Error line: " << e.getLine() << '\n';
+                      << "Error line: "          << e.getLine() << '\n';
+        }
+
+        EventOut eventOut = eventIn.execute();
+        eventIn.print();
+
+        if (eventOut.needToExecute())
+        {
+            eventOut.execute();
+            eventOut.print();
         }
     }
 

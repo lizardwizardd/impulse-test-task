@@ -17,7 +17,7 @@ EventIn::EventIn(ComputerClub* computerClub, Time time, TypeIn type,
     tableNumber(tableNumber)
 {}
 
-void EventIn::parseLine(const std::string& line)
+EventIn::TypeIn EventIn::parseLine(const std::string& line)
 {
     try
     {
@@ -62,6 +62,11 @@ EventOut EventIn::execute()
 EventIn::TypeIn EventIn::getType() const
 {
     return eventType;
+}
+
+void EventIn::print() const
+{
+    std::cout << *this << "\n";
 }
 
 EventIn::TypeOut EventIn::executeEntered() const

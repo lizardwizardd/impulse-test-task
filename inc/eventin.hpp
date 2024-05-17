@@ -18,16 +18,17 @@ private:
     TypeOut executeLeft() const;
 
 public:
-    EventIn() = delete; // Для работы класса нужен указатель на ComputerClub
+    EventIn() = delete; // Для работы класса обязателен указатель на ComputerClub
+    EventIn(ComputerClub* computerClub, const std::string& line);
     EventIn(ComputerClub* computerClub, Time eventTime = Time(), TypeIn eventType = TypeIn::UNKNOWN,
             std::string clientName = "", unsigned int tableNumber = 0);
-    EventIn(ComputerClub* computerClub, const std::string& line);
 
     // Возвращает исходящее событие. Если в ответ на входящее событие
     // не должно быть исходящего, то возвращается событие с типом NO_EVENT
     EventOut execute();
-    void parseLine(const std::string& line);
+    TypeIn parseLine(const std::string& line); // считывает строку и возвращает тип события
     TypeIn getType() const;
+    void print() const;
 
     friend std::ostream& operator<<(std::ostream& out, const EventIn& event);
 };
