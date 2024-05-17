@@ -16,9 +16,8 @@ add_library(class_computerclub STATIC
     src/computerclub.cpp
     src/inputbuffer.cpp
     src/mytime.cpp
-    src/eventin.cpp
-    src/eventout.cpp
     src/myexceptions.cpp
+    src/event.cpp
 )
 target_include_directories(class_computerclub PUBLIC include)
 
@@ -28,7 +27,7 @@ target_link_libraries(ComputerClub class_computerclub)
 
 add_executable(tests
     test/test.cpp
-    test/test_events.cpp
+    test/test_event.cpp
     test/test_time.cpp
     test/test_buffer.cpp
 )

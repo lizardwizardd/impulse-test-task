@@ -19,7 +19,7 @@ int main(int argc, char** argv)
     }
     catch(const ParseException& e)
     {
-        std::cerr << "Uncaught exception while parsing: " << e.what() << '\n'
+        std::cerr << "Exception thrown while parsing: " << e.what() << '\n'
                   << "Error line: " << e.getLine() << '\n';
     }
     catch(const std::exception& e)

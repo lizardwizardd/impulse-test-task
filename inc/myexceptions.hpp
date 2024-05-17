@@ -3,6 +3,7 @@
 #include <exception>
 #include <string>
 
+
 class ParseException : public std::exception
 {
 private:
