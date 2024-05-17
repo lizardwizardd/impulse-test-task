@@ -1,5 +1,8 @@
 #include "../inc/eventin.hpp"
 
+#include "../inc/myexceptions.hpp"
+
+
 EventIn::EventIn(ComputerClub* computerClub, const std::string& line) :
     EventBase(computerClub, Time())
 {
@@ -94,23 +97,4 @@ std::ostream& operator<<(std::ostream& out, const EventIn& event)
             << event.clientName << " " << event.tableNumber;
     }
     return out;
-}
-
-//
-// PARSE EXCEPTION
-//
-
-ParseException::ParseException(const std::string& msg, const std::string& line) :
-    message(msg),
-    line(line)
-{}
-
-const char* ParseException::what() const noexcept
-{
-    return message.c_str();
-}
-
-const std::string& ParseException::getLine() const
-{
-    return line;
 }

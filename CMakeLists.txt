@@ -11,12 +11,14 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+
 add_library(class_computerclub STATIC
     src/computerclub.cpp
     src/filebuffer.cpp
     src/mytime.cpp
     src/eventin.cpp
     src/eventout.cpp
+    src/myexceptions.cpp
 )
 target_include_directories(class_computerclub PUBLIC include)
 
@@ -24,11 +26,14 @@ add_executable(ComputerClub main.cpp)
 target_link_libraries(ComputerClub class_computerclub)
 
 
-# add_executable(tests 
-# )
+add_executable(tests
+    test/test.cpp
+    test/test_events.cpp
+    test/test_time.cpp
+)
 
-# target_link_libraries(tests 
-#     class_computerclub
-#     gtest_main
-#     gmock_main
-# )
+target_link_libraries(tests 
+    class_computerclub
+    gtest_main
+    gmock_main
+)

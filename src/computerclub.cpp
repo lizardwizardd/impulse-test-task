@@ -6,6 +6,7 @@
 #include "../inc/mytime.hpp"
 #include "../inc/eventin.hpp"
 #include "../inc/eventout.hpp"
+#include "../inc/myexceptions.hpp"
 
 
 ComputerClub::ComputerClub(const std::string& filename) :
@@ -17,7 +18,7 @@ ComputerClub::ComputerClub(const std::string& filename) :
     buffer.readInputLine(); // считать время начала и конца работы
     std::string workTimeLine = buffer.getBuffer();
     openTime = Time(workTimeLine.substr(0, workTimeLine.find(' ')));
-    closeTime = Time(workTimeLine.substr(workTimeLine.find(' '), workTimeLine.size()));
+    closeTime = Time(workTimeLine.substr(workTimeLine.find(' ') + 1, workTimeLine.size()));
 
     buffer.readInputLine(); // считать стоимость часа
     costPerHour = std::stoi(buffer.getBuffer());
