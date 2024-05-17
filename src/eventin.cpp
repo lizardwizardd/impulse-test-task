@@ -33,17 +33,9 @@ void EventIn::parseLine(const std::string& line)
             this->tableNumber = std::stoi(line.substr(thirdSpaceI + 1, line.size() - thirdSpaceI - 1));
         }
     }
-    catch(const std::invalid_argument& e)
-    {
-        throw std::invalid_argument("Invalid argument error while parsing event: " + std::string(e.what()));
-    }
-    catch(const std::out_of_range& e)
-    {
-        throw std::out_of_range("Out of range error while parsing event: " + std::string(e.what()));
-    }
     catch(const std::exception& e)
     {
-        throw std::runtime_error("Error while parsing event: " + std::string(e.what()));
+        throw ParseException(std::string(e.what()), line);
     }
 }
 
@@ -62,6 +54,11 @@ EventOut EventIn::execute()
         default:
             throw std::runtime_error("Unknown event type in execute()");
     }
+}
+
+EventIn::TypeIn EventIn::getType() const
+{
+    return eventType;
 }
 
 EventIn::TypeOut EventIn::executeEntered() const
@@ -97,4 +94,23 @@ std::ostream& operator<<(std::ostream& out, const EventIn& event)
             << event.clientName << " " << event.tableNumber;
     }
     return out;
+}
+
+//
+// PARSE EXCEPTION
+//
+
+ParseException::ParseException(const std::string& msg, const std::string& line) :
+    message(msg),
+    line(line)
+{}
+
+const char* ParseException::what() const noexcept
+{
+    return message.c_str();
+}
+
+const std::string& ParseException::getLine() const
+{
+    return line;
 }

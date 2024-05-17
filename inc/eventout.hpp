@@ -12,7 +12,7 @@ private:
     void executeError() const;
 
 public:
-    EventOut() = delete;
+    EventOut() = delete; // Для работы класса нужен указатель на ComputerClub
     EventOut(ComputerClub* computerClub, Time eventTime = Time(),
              TypeOut eventType = TypeOut::UNKNOWN);
 

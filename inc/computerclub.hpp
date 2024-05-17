@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <map>
+#include <queue>
 
 #include "filebuffer.hpp"
 #include "mytime.hpp"
@@ -15,6 +17,9 @@ private:
     unsigned int costPerHour;
 
     FileBuffer buffer;
+
+    std::queue<std::string> clientsQueue;
+    std::map<std::string, unsigned int> tables;
 
 public:
     ComputerClub() = delete;

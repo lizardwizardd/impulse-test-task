@@ -29,10 +29,17 @@ void ComputerClub::run()
 
     while (buffer.readInputLine())
     {
-        EventIn eventIn(this, buffer.getBuffer());
-        std::cout << eventIn << '\n';
-        EventOut eventOut = eventIn.execute();
-        std::cout << eventOut << '\n';
+        try
+        {
+            EventIn eventIn(this, buffer.getBuffer());
+            std::cout << eventIn << '\n';
+            EventOut eventOut = eventIn.execute();
+        }
+        catch(const ParseException& e)
+        {
+            std::cout << "Error while parsing: " << e.what() << '\n'
+                      << "Error line: " << e.getLine() << '\n';
+        }
     }
 
     std::cout << closeTime << '\n';
