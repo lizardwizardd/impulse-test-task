@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "../inc/computerclub.hpp"
+#include "../inc/myexceptions.hpp"
 
 int main(int argc, char** argv)
 {
@@ -15,6 +16,11 @@ int main(int argc, char** argv)
         ComputerClub computerClub(argv[1]);
         //ComputerClub computerClub("../../sample_input.txt");
         computerClub.run();
+    }
+    catch(const ParseException& e)
+    {
+        std::cerr << "Uncaught exception while parsing: " << e.what() << '\n'
+                  << "Error line: " << e.getLine() << '\n';
     }
     catch(const std::exception& e)
     {

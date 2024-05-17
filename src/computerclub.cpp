@@ -10,18 +10,37 @@
 
 
 ComputerClub::ComputerClub(const std::string& filename) :
-    buffer(filename)
+    file(filename), buffer(file)
 {
-    buffer.readInputLine(); // считать количество столов
-    tablesCount = std::stoi(buffer.getBuffer());
+    if (!file.is_open())
+    {
+        throw std::runtime_error("Error opening file '" + filename + "'. \n" +
+                                 "Make sure the specified path is correct.");
+    }
 
-    buffer.readInputLine(); // считать время начала и конца работы
-    std::string workTimeLine = buffer.getBuffer();
-    openTime = Time(workTimeLine.substr(0, workTimeLine.find(' ')));
-    closeTime = Time(workTimeLine.substr(workTimeLine.find(' ') + 1, workTimeLine.size()));
+    try
+    {
+        buffer.readInputLine(); // считать количество столов
+        tablesCount = std::stoi(buffer.getBuffer());
 
-    buffer.readInputLine(); // считать стоимость часа
-    costPerHour = std::stoi(buffer.getBuffer());
+        buffer.readInputLine(); // считать время начала и конца работы
+        std::string workTimeLine = buffer.getBuffer();
+        openTime = Time(workTimeLine.substr(0, workTimeLine.find(' ')));
+        closeTime = Time(workTimeLine.substr(workTimeLine.find(' ') + 1, workTimeLine.size()));
+
+        buffer.readInputLine(); // считать стоимость часа
+        costPerHour = std::stoi(buffer.getBuffer());
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << "Error while parsing: " << e.what() << '\n'
+                  << "Error line: " << buffer.getBuffer() << '\n';
+    }
+}
+
+ComputerClub::~ComputerClub()
+{
+    file.close();
 }
 
 void ComputerClub::run()

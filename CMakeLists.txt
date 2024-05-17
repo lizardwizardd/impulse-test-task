@@ -14,7 +14,7 @@ FetchContent_MakeAvailable(googletest)
 
 add_library(class_computerclub STATIC
     src/computerclub.cpp
-    src/filebuffer.cpp
+    src/inputbuffer.cpp
     src/mytime.cpp
     src/eventin.cpp
     src/eventout.cpp

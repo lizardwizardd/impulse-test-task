@@ -2,9 +2,10 @@
 
 #include <string>
 #include <map>
+#include <fstream>
 #include <queue>
 
-#include "filebuffer.hpp"
+#include "inputbuffer.hpp"
 #include "mytime.hpp"
 
 
@@ -16,7 +17,8 @@ private:
     Time closeTime;
     unsigned int costPerHour;
 
-    FileBuffer buffer;
+    std::ifstream file;
+    InputBuffer buffer;
 
     std::queue<std::string> clientsQueue;
     std::map<std::string, unsigned int> tables;
@@ -24,6 +26,7 @@ private:
 public:
     ComputerClub() = delete;
     ComputerClub(const std::string& filename);
+    ~ComputerClub();
 
     void run();
 };
