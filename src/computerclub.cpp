@@ -30,6 +30,7 @@ void Table::clientLeaves(const Time& time)
 
     unsigned int minsOccupied = Time(time - startTime).getMins();
     revenue += ((minsOccupied + 59) / 60) * Table::costPerHour;
+    totalMins += minsOccupied;
 
     isOccupied = false;
     currentClient = Client();
@@ -108,6 +109,10 @@ void ComputerClub::run()
                 occupyFromQueue(event);
                 event.print();
                 break;
+            case Event::Type::CLIENT_LEFT_FORCED:
+                clientLeaveQueueTooLong(event);
+                event.print();
+                break;
             case Event::Type::ERROR_CLIENT_ALREADY_INSIDE:
                 printError(event.getEventTime(), "YouShallNotPass");
                 break;
@@ -130,7 +135,9 @@ void ComputerClub::run()
         }        
     }
 
+    endOfDayAllClientsLeave(closeTime);
     std::cout << closeTime << '\n';
+    printTablesStats();
 }
 
 
@@ -193,13 +200,16 @@ Event::Type ComputerClub::handleClientWaiting(const Event& event)
     if (clients.find(event.getClientName()) == clients.end())
         return Event::Type::ERROR_CLIENT_UNKNOWN;
     
+    if (clients.at(event.getClientName()).tableNumber != 0)
+        throw std::logic_error("Client can't wait because he already occupies a table");
+
     if (clientsQueue.size() > tablesCount)
     {
-        return Event::Type::CLIENT_LEFT_END_OF_DAY;
+        return Event::Type::CLIENT_LEFT_FORCED;
     }
 
     // Проверить, если ли свободный стол
-    for (unsigned int i = 1; i < tablesCount; i++)
+    for (unsigned int i = 1; i < tables.size(); i++)
     {
         if (!tables[i].isOccupied)
             return Event::Type::ERROR_CLIENT_CAN_NOT_WAIT;
@@ -239,6 +249,7 @@ Event::Type ComputerClub::handleClientLeft(Event& event)
     }
 }
 
+
 void ComputerClub::occupyFromQueue(const Event& eventIn)
 {
     if (clientsQueue.size() == 0)
@@ -252,6 +263,46 @@ void ComputerClub::occupyFromQueue(const Event& eventIn)
     client.tableNumber = eventIn.getTableNumber();
 
     clientsQueue.pop_front();
+}
+
+void ComputerClub::clientLeaveQueueTooLong(Event& event)
+{
+    if (clients.find(event.getClientName()) == clients.end())
+        throw std::invalid_argument("Name of client to leave not found");
+
+    Client& client = clients.at(event.getClientName());
+    if (client.tableNumber != 0) // нужно освободить стол
+    {
+        tables[client.tableNumber].clientLeaves(event.getEventTime());
+        client.tableNumber = 0;
+    }
+
+    clients.erase(event.getClientName());
+
+    event = Event(event.getEventTime(), Event::Type::CLIENT_LEFT_FORCED, event.getClientName());
+}
+
+void ComputerClub::endOfDayAllClientsLeave(const Time& time)
+{
+    for (auto& client : clients)
+    {
+        if (client.second.tableNumber != 0)
+        {
+            tables[client.second.tableNumber].clientLeaves(time);
+            client.second.tableNumber = 0;
+        }
+
+        std::cout << time << " " << (unsigned int)Event::Type::CLIENT_LEFT_FORCED
+                  << " "  << client.first << '\n';
+    }
+}
+
+void ComputerClub::printTablesStats()
+{
+    for (unsigned int i = 1; i < tables.size(); i++)
+    {
+        std::cout << i << " " << tables[i].revenue << " " << Time(tables[i].totalMins) << '\n';
+    }
 }
 
 void ComputerClub::printError(const Time& time, const std::string& errorText)

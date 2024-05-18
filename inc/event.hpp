@@ -15,7 +15,7 @@ public:
         CLIENT_LEFT = 4,                  // клиент ушел
 
         SUCCESS_NO_EVENT = 10,            // завершено без исходящего события
-        CLIENT_LEFT_END_OF_DAY = 11,      // конец дня или полная очередь
+        CLIENT_LEFT_FORCED = 11,      // конец дня или полная очередь
         TABLE_FREE_QUEUE_NOT_EMPTY = 12,  // свободный стол при не пустой очереди
         ERROR = 13,                       // ошибка
 

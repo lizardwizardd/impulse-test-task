@@ -29,6 +29,7 @@ struct Table
     Client currentClient;
     Time startTime; // время когда currentClient занял стол
     unsigned int revenue = 0;
+    unsigned int totalMins = 0; // сколько минут был занят стол за день
 
     // Освободить стол и подсчитать доход. Не изменяет client.tableNumber
     void clientLeaves(const Time& time);
@@ -43,7 +44,7 @@ struct Table
 class ComputerClub
 {
 private:
-    unsigned int tablesCount;
+    unsigned int tablesCount; // количество столов в клубе
     Time openTime;
     Time closeTime;
     unsigned int costPerHour;
@@ -66,7 +67,11 @@ private:
 
     // На вход поступает событие с clientName из очереди
     void occupyFromQueue(const Event& eventIn);
+    void clientLeaveQueueTooLong(Event& event); // изменяет event
     void printError(const Time& time, const std::string& errorText);
+
+    void endOfDayAllClientsLeave(const Time& time);
+    void printTablesStats();
 
     bool isOpen(const Time& time);
 
