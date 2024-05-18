@@ -32,7 +32,7 @@ private:
 
 public:
     static unsigned int costPerHour;
-    
+
     unsigned int getRevenue() const;
     unsigned int getTotalMins() const;
     bool isOccupied() const;
@@ -64,12 +64,12 @@ private:
 
     // Обрабатывает входящее событие. Возвращает тип исходящего события.
     // event может быть изменен в результате обработки
-    Event::Type handleEventIn(Event& event);
+    Event::TypeOut handleEventIn(Event& event);
 
-    Event::Type handleClientEntered(const Event& event);
-    Event::Type handleClientOccupiedTable(const Event& event);
-    Event::Type handleClientWaiting(const Event& event);
-    Event::Type handleClientLeft(Event& event); // может изменить event
+    Event::TypeOut handleClientEntered(const Event& event);
+    Event::TypeOut handleClientOccupiedTable(const Event& event);
+    Event::TypeOut handleClientWaiting(const Event& event);
+    Event::TypeOut handleClientLeft(Event& event); // может изменить event
 
     // На вход поступает событие с clientName из очереди
     void occupyFromQueue(const Event& eventIn);

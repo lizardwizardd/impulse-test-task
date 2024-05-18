@@ -118,32 +118,32 @@ void ComputerClub::run()
 
         switch (handleEventIn(event))
         {
-            case Event::Type::SUCCESS_NO_EVENT:
+            case Event::TypeOut::SUCCESS_NO_EVENT:
                 break;
-            case Event::Type::TABLE_FREE_QUEUE_NOT_EMPTY:
+            case Event::TypeOut::TABLE_FREE_QUEUE_NOT_EMPTY:
                 occupyFromQueue(event);
                 event.print();
                 break;
-            case Event::Type::CLIENT_LEFT_FORCED:
+            case Event::TypeOut::CLIENT_LEFT_FORCED:
                 clientLeaveQueueTooLong(event);
                 event.print();
                 break;
-            case Event::Type::ERROR_CLIENT_ALREADY_INSIDE:
+            case Event::TypeOut::ERROR_CLIENT_ALREADY_INSIDE:
                 printError(event.getEventTime(), "YouShallNotPass");
                 break;
-            case Event::Type::ERROR_NOT_OPEN_YET:
+            case Event::TypeOut::ERROR_NOT_OPEN_YET:
                 printError(event.getEventTime(), "NotOpenYet");
                 break;
-            case Event::Type::ERROR_PLACE_IS_BUSY:
+            case Event::TypeOut::ERROR_PLACE_IS_BUSY:
                 printError(event.getEventTime(), "PlaceIsBusy");
                 break;
-            case Event::Type::ERROR_CLIENT_UNKNOWN:
+            case Event::TypeOut::ERROR_CLIENT_UNKNOWN:
                 printError(event.getEventTime(), "ClientUnknown");
                 break;
-            case Event::Type::ERROR_CLIENT_CAN_NOT_WAIT:
+            case Event::TypeOut::ERROR_CLIENT_CAN_NOT_WAIT:
                 printError(event.getEventTime(), "ICanWainNoLonger!");
                 break;
-            case Event::Type::UNKNOWN:
+            case Event::TypeOut::UNKNOWN:
                 throw std::runtime_error("Unknown outgoing event type");
             default:
                 throw std::runtime_error("Unexpected outgoing event type");
@@ -156,17 +156,17 @@ void ComputerClub::run()
 }
 
 
-Event::Type ComputerClub::handleEventIn(Event& event)
+Event::TypeOut ComputerClub::handleEventIn(Event& event)
 {
     switch (event.getEventType())
     {
-        case Event::Type::CLIENT_ENTERED:
+        case Event::TypeIn::CLIENT_ENTERED:
             return handleClientEntered(event);
-        case Event::Type::CLIENT_OCCUPIED_TABLE:
+        case Event::TypeIn::CLIENT_OCCUPIED_TABLE:
             return handleClientOccupiedTable(event);
-        case Event::Type::CLIENT_WAITING:
+        case Event::TypeIn::CLIENT_WAITING:
             return handleClientWaiting(event);
-        case Event::Type::CLIENT_LEFT:
+        case Event::TypeIn::CLIENT_LEFT:
             return handleClientLeft(event);
         default:
             throw std::runtime_error("Unknown incoming event type");
@@ -174,26 +174,26 @@ Event::Type ComputerClub::handleEventIn(Event& event)
 }
 
 
-Event::Type ComputerClub::handleClientEntered(const Event& event)
+Event::TypeOut ComputerClub::handleClientEntered(const Event& event)
 {
     if (clients.find(event.getClientName()) != clients.end())
-        return Event::Type::ERROR_CLIENT_ALREADY_INSIDE;
+        return Event::TypeOut::ERROR_CLIENT_ALREADY_INSIDE;
 
     if (!isOpen(event.getEventTime()))
-        return Event::Type::ERROR_NOT_OPEN_YET;
+        return Event::TypeOut::ERROR_NOT_OPEN_YET;
 
     clients.insert({ event.getClientName(), Client(event.getClientName()) });
 
-    return Event::Type::SUCCESS_NO_EVENT;
+    return Event::TypeOut::SUCCESS_NO_EVENT;
 }
 
-Event::Type ComputerClub::handleClientOccupiedTable(const Event& event)
+Event::TypeOut ComputerClub::handleClientOccupiedTable(const Event& event)
 {
     if (clients.find(event.getClientName()) == clients.end())
-        return Event::Type::ERROR_CLIENT_UNKNOWN;
+        return Event::TypeOut::ERROR_CLIENT_UNKNOWN;
 
     if (tables[event.getTableNumber()].isOccupied())
-        return Event::Type::ERROR_PLACE_IS_BUSY;
+        return Event::TypeOut::ERROR_PLACE_IS_BUSY;
 
     Client& client = clients.at(event.getClientName());
 
@@ -207,39 +207,39 @@ Event::Type ComputerClub::handleClientOccupiedTable(const Event& event)
     tables[event.getTableNumber()].clientOccupies(client, event.getEventTime());
     client.tableNumber = event.getTableNumber();
 
-    return Event::Type::SUCCESS_NO_EVENT;
+    return Event::TypeOut::SUCCESS_NO_EVENT;
 }
 
-Event::Type ComputerClub::handleClientWaiting(const Event& event)
+Event::TypeOut ComputerClub::handleClientWaiting(const Event& event)
 {
     if (clients.find(event.getClientName()) == clients.end())
-        return Event::Type::ERROR_CLIENT_UNKNOWN;
+        return Event::TypeOut::ERROR_CLIENT_UNKNOWN;
     
     if (clients.at(event.getClientName()).tableNumber != 0)
         throw std::logic_error("Client can't wait because he already occupies a table");
 
     if (clientsQueue.size() > tablesCount)
     {
-        return Event::Type::CLIENT_LEFT_FORCED;
+        return Event::TypeOut::CLIENT_LEFT_FORCED;
     }
 
     // Проверить, если ли свободный стол
     for (unsigned int i = 1; i < tables.size(); i++)
     {
         if (!tables[i].isOccupied())
-            return Event::Type::ERROR_CLIENT_CAN_NOT_WAIT;
+            return Event::TypeOut::ERROR_CLIENT_CAN_NOT_WAIT;
     }
 
     // Добавить в очередь
     clientsQueue.push_back(event.getClientName());
 
-    return Event::Type::SUCCESS_NO_EVENT;
+    return Event::TypeOut::SUCCESS_NO_EVENT;
 }
 
-Event::Type ComputerClub::handleClientLeft(Event& event)
+Event::TypeOut ComputerClub::handleClientLeft(Event& event)
 {
     if (clients.find(event.getClientName()) == clients.end())
-        return Event::Type::ERROR_CLIENT_UNKNOWN;
+        return Event::TypeOut::ERROR_CLIENT_UNKNOWN;
 
     // Освободить стол
     unsigned int freeTableIndex = clients.at(event.getClientName()).tableNumber;
@@ -253,14 +253,14 @@ Event::Type ComputerClub::handleClientLeft(Event& event)
 
     if (clientsQueue.size() == 0)
     {
-        return Event::Type::SUCCESS_NO_EVENT;
+        return Event::TypeOut::SUCCESS_NO_EVENT;
     }
     else
     {
         // Изменить event, чтобы упростить его обработку в occupyFromQueue и вывод в cout
-        event = Event(event.getEventTime(), Event::Type::TABLE_FREE_QUEUE_NOT_EMPTY,
+        event = Event(event.getEventTime(), Event::TypeIn::TABLE_FREE_QUEUE_NOT_EMPTY,
                       clientsQueue.front(), freeTableIndex);
-        return Event::Type::TABLE_FREE_QUEUE_NOT_EMPTY;
+        return Event::TypeOut::TABLE_FREE_QUEUE_NOT_EMPTY;
     }
 }
 
@@ -294,7 +294,7 @@ void ComputerClub::clientLeaveQueueTooLong(Event& event)
 
     clients.erase(event.getClientName());
 
-    event = Event(event.getEventTime(), Event::Type::CLIENT_LEFT_FORCED, event.getClientName());
+    event = Event(event.getEventTime(), Event::TypeIn::CLIENT_LEFT_FORCED, event.getClientName());
 }
 
 void ComputerClub::endOfDayAllClientsLeave(const Time& time)
@@ -307,7 +307,7 @@ void ComputerClub::endOfDayAllClientsLeave(const Time& time)
             client.second.tableNumber = 0;
         }
 
-        std::cout << time << " " << (unsigned int)Event::Type::CLIENT_LEFT_FORCED
+        std::cout << time << " " << (unsigned int)Event::TypeOut::CLIENT_LEFT_FORCED
                   << " "  << client.first << '\n';
     }
 }
@@ -322,7 +322,7 @@ void ComputerClub::printTablesStats()
 
 void ComputerClub::printError(const Time& time, const std::string& errorText)
 {
-    std::cout << time << " " << (unsigned int)Event::Type::ERROR << " " << errorText << '\n';
+    std::cout << time << " " << (unsigned int)Event::TypeOut::ERROR << " " << errorText << '\n';
 }
 
 bool ComputerClub::isOpen(const Time& time)

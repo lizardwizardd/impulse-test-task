@@ -4,14 +4,14 @@
 
 #include "../inc/myexceptions.hpp"
 
-Event::Event(Time eventTime, Type eventType, std::string clientName, unsigned int tableNumber) :
+Event::Event(Time eventTime, TypeIn eventType, std::string clientName, unsigned int tableNumber) :
     eventTime(eventTime),
     eventType(eventType),
     clientName(clientName),
     tableNumber(tableNumber)
 {}
 
-Event::Type Event::parseLine(const std::string& line)
+Event::TypeIn Event::parseLine(const std::string& line)
 {
     std::istringstream iss(line);
     try
@@ -23,7 +23,7 @@ Event::Type Event::parseLine(const std::string& line)
         }
 
         this->eventTime = Time(timeStr);
-        this->eventType = Event::Type(std::stoi(typeStr));
+        this->eventType = Event::TypeIn(std::stoi(typeStr));
         this->clientName = clientStr;
 
         if (iss >> tableStr) // в строке 4 аргумента
@@ -39,7 +39,7 @@ Event::Type Event::parseLine(const std::string& line)
     }
 }
 
-Event::Type Event::getEventType() const noexcept
+Event::TypeIn Event::getEventType() const noexcept
 {
     return eventType;
 }

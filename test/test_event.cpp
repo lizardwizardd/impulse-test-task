@@ -8,10 +8,10 @@
 
 TEST(EventTest, Constructor)
 {
-    Event event(Time("18:30"), Event::Type::CLIENT_WAITING, "client1", 1);
+    Event event(Time("18:30"), Event::TypeIn::CLIENT_WAITING, "client1", 1);
 
     EXPECT_EQ(event.getEventTime(), Time(18 * 60 + 30));
-    EXPECT_EQ(event.getEventType(), Event::Type::CLIENT_WAITING);
+    EXPECT_EQ(event.getEventType(), Event::TypeIn::CLIENT_WAITING);
     EXPECT_EQ(event.getClientName(), "client1");
     EXPECT_EQ(event.getTableNumber(), 1);
 }
@@ -19,11 +19,11 @@ TEST(EventTest, Constructor)
 TEST(EventTest, ParseThreeArguments)
 {
     Event event;
-    Event::Type type = event.parseLine("12:30 4 client3");
+    Event::TypeIn type = event.parseLine("12:30 4 client3");
 
-    EXPECT_EQ(type, Event::Type::CLIENT_LEFT);
+    EXPECT_EQ(type, Event::TypeIn::CLIENT_LEFT);
     EXPECT_EQ(event.getEventTime(), Time("12:30"));
-    EXPECT_EQ(event.getEventType(), Event::Type::CLIENT_LEFT);
+    EXPECT_EQ(event.getEventType(), Event::TypeIn::CLIENT_LEFT);
     EXPECT_EQ(event.getClientName(), "client3");
     EXPECT_EQ(event.getTableNumber(), 0);
 }
@@ -31,11 +31,11 @@ TEST(EventTest, ParseThreeArguments)
 TEST(EventTest, ParseLineWithFourArguments)
 {
     Event event;
-    Event::Type type = event.parseLine("08:05 2 client1 4");
+    Event::TypeIn type = event.parseLine("08:05 2 client1 4");
 
-    EXPECT_EQ(type, Event::Type::CLIENT_OCCUPIED_TABLE);
+    EXPECT_EQ(type, Event::TypeIn::CLIENT_OCCUPIED_TABLE);
     EXPECT_EQ(event.getEventTime(), Time("08:05"));
-    EXPECT_EQ(event.getEventType(), Event::Type::CLIENT_OCCUPIED_TABLE);
+    EXPECT_EQ(event.getEventType(), Event::TypeIn::CLIENT_OCCUPIED_TABLE);
     EXPECT_EQ(event.getClientName(), "client1");
     EXPECT_EQ(event.getTableNumber(), 4);
 }
@@ -43,11 +43,11 @@ TEST(EventTest, ParseLineWithFourArguments)
 TEST(EventTest, ParseLineWithTooManySpaces)
 {
     Event event;
-    Event::Type type = event.parseLine("08:05   2   client1   4");
+    Event::TypeIn type = event.parseLine("08:05   2   client1   4");
 
-    EXPECT_EQ(type, Event::Type::CLIENT_OCCUPIED_TABLE);
+    EXPECT_EQ(type, Event::TypeIn::CLIENT_OCCUPIED_TABLE);
     EXPECT_EQ(event.getEventTime(), Time("08:05"));
-    EXPECT_EQ(event.getEventType(), Event::Type::CLIENT_OCCUPIED_TABLE);
+    EXPECT_EQ(event.getEventType(), Event::TypeIn::CLIENT_OCCUPIED_TABLE);
     EXPECT_EQ(event.getClientName(), "client1");
     EXPECT_EQ(event.getTableNumber(), 4);
 }
@@ -64,14 +64,6 @@ TEST(EventTest, ParseTooFewArgs)
     EXPECT_THROW(event.parseLine("22:30 2"), ParseException);
 }
 
-/*
-TEST(EventTest, ParseTooManyArgs)
-{
-    Event event;
-    EXPECT_THROW(event.parseLine("22:30 2 client1 4 5"), ParseException);
-}
-*/
-
 TEST(EventTest, ParseWrongType)
 {
     Event event;
@@ -80,7 +72,7 @@ TEST(EventTest, ParseWrongType)
 
 TEST(EventTest, PrintThreeArguments)
 {
-    Event event(Time("18:30"), Event::Type::CLIENT_LEFT, "client1", 0);
+    Event event(Time("18:30"), Event::TypeIn::CLIENT_LEFT, "client1", 0);
 
     testing::internal::CaptureStdout();
     event.print();
@@ -91,7 +83,7 @@ TEST(EventTest, PrintThreeArguments)
 
 TEST(EventTest, PrintFourArguments)
 {
-    Event event(Time("18:30"), Event::Type::CLIENT_OCCUPIED_TABLE, "client1", 4);
+    Event event(Time("18:30"), Event::TypeIn::CLIENT_OCCUPIED_TABLE, "client1", 4);
 
     testing::internal::CaptureStdout();
     event.print();
