@@ -14,7 +14,7 @@ int main(int argc, char** argv)
     try
     {
         ComputerClub computerClub(argv[1]);
-        //ComputerClub computerClub("../../input1_test.txt");
+        //ComputerClub computerClub("../../sample_input2.txt");
         computerClub.run();
     }
     catch(const ParseException& e)

@@ -190,6 +190,9 @@ Event::TypeOut ComputerClub::handleClientEntered(const Event& event)
 
 Event::TypeOut ComputerClub::handleClientOccupiedTable(const Event& event)
 {
+    if (event.getTableNumber() > tablesCount)
+        throw ParseException("Table number out of range", buffer.getBuffer());
+
     if (clients.find(event.getClientName()) == clients.end())
         return Event::TypeOut::ERROR_CLIENT_UNKNOWN;
 
