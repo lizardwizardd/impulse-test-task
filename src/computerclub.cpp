@@ -89,7 +89,7 @@ Event::Type ComputerClub::handleEventIn(const Event& event)
     {
         case Event::Type::CLIENT_ENTERED:
             return handleClientEntered(event);
-        case Event::Type::CLINET_OCCUPIED_TABLE:
+        case Event::Type::CLIENT_OCCUPIED_TABLE:
             return handleClientOccupiedTable(event);
         case Event::Type::CLIENT_WAITING:
             return handleClientWaiting(event);

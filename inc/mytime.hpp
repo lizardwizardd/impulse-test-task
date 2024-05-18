@@ -21,5 +21,7 @@ public:
     // Если левый аргумент меньше правого, предполагается что сменился день  
     Time operator-(const Time& time) const;
 
+    bool operator==(const Time& time) const;
+
     friend std::ostream& operator<<(std::ostream& out, const Time& time);
 };

@@ -10,7 +10,7 @@ public:
     {
         UNKNOWN = 0,
         CLIENT_ENTERED = 1,               // клиент зашел
-        CLINET_OCCUPIED_TABLE = 2,        // клиент занял стол
+        CLIENT_OCCUPIED_TABLE = 2,        // клиент занял стол
         CLIENT_WAITING = 3,               // клиент ожидает в очереди
         CLIENT_LEFT = 4,                  // клиент ушел
 
@@ -32,8 +32,14 @@ public:
           std::string clientName = "", unsigned int tableNumber = 0);
 
     // Считывает строку и возвращает тип события
+    // Формат: <время> <тип события> <имя клиента> <номер стола = 0> 
     Type parseLine(const std::string& line);
+
+    // Для тестов
     Type getEventType() const noexcept;
     Time getEventTime() const noexcept;
+    std::string getClientName() const noexcept;
+    unsigned int getTableNumber() const noexcept;
+
     void print() const;
 };

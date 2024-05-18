@@ -1,5 +1,7 @@
 #include "../inc/event.hpp"
 
+#include <sstream>
+
 #include "../inc/myexceptions.hpp"
 
 Event::Event(Time eventTime, Type eventType, std::string clientName, unsigned int tableNumber) :
@@ -11,26 +13,27 @@ Event::Event(Time eventTime, Type eventType, std::string clientName, unsigned in
 
 Event::Type Event::parseLine(const std::string& line)
 {
+    std::istringstream iss(line);
     try
     {
-        size_t firstSpaceI = line.find(' ');
-        size_t secondSpaceI = line.find(' ', firstSpaceI + 1);
-        size_t thirdSpaceI = line.find(' ', secondSpaceI + 1);
+        std::string timeStr, typeStr, clientStr, tableStr;
 
-        this->eventTime = Time(line.substr(0, firstSpaceI));
-        this->eventType = Event::Type(std::stoi(line.substr(firstSpaceI + 1, secondSpaceI - firstSpaceI - 1)));
-
-        if (thirdSpaceI == std::string::npos) // в строке 3 аргумента
-            this->clientName = line.substr(secondSpaceI + 1, line.size() - secondSpaceI - 1);
-        else                                  // в строке 4 аргумента
-        {
-            this->clientName = line.substr(secondSpaceI + 1, thirdSpaceI - secondSpaceI - 1);
-            this->tableNumber = std::stoi(line.substr(thirdSpaceI + 1, line.size() - thirdSpaceI - 1));
+        if (!(iss >> timeStr >> typeStr >> clientStr)) {
+            throw ParseException("Invalid number of arguments", line);
         }
+
+        this->eventTime = Time(timeStr);
+        this->eventType = Event::Type(std::stoi(typeStr));
+        this->clientName = clientStr;
+
+        if (iss >> tableStr) // в строке 4 аргумента
+            this->tableNumber = std::stoi(tableStr);
+        else                 // в строке 3 аргумента
+            this->tableNumber = 0;
 
         return eventType;
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         throw ParseException(std::string(e.what()), line);
     }
@@ -44,6 +47,16 @@ Event::Type Event::getEventType() const noexcept
 Time Event::getEventTime() const noexcept
 {
     return eventTime;
+}
+
+std::string Event::getClientName() const noexcept
+{
+    return clientName;
+}
+
+unsigned int Event::getTableNumber() const noexcept
+{
+    return tableNumber;
 }
 
 void Event::print() const
