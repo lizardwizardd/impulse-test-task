@@ -23,5 +23,11 @@ public:
 
     bool operator==(const Time& time) const;
 
+    bool operator<(const Time& time) const; 
+    bool operator>(const Time& time) const;
+    bool operator<=(const Time& time) const;
+    bool operator>=(const Time& time) const;
+
+
     friend std::ostream& operator<<(std::ostream& out, const Time& time);
 };

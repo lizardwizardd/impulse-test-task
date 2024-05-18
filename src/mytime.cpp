@@ -77,6 +77,26 @@ bool Time::operator==(const Time& time) const
     return mins == time.mins;
 }
 
+bool Time::operator<(const Time& time) const
+{
+    return mins < time.mins;
+}
+
+bool Time::operator>(const Time& time) const
+{
+    return mins > time.mins;
+}
+
+bool Time::operator<=(const Time& time) const
+{
+    return mins <= time.mins;
+}
+
+bool Time::operator>=(const Time& time) const
+{
+    return mins >= time.mins;
+}
+
 std::ostream& operator<<(std::ostream& out, const Time& time)
 {
     out << time.getFormattedString();

@@ -97,3 +97,39 @@ TEST(TimeTest, SubtractOperatorDayPassed)
     result = time - Time("02:35");
     EXPECT_EQ(result.getFormattedString(), "22:55");
 }
+
+TEST(TimeTest, OperatorEqual)
+{
+    Time time("01:30");
+    EXPECT_TRUE(time == Time("01:30"));
+}
+
+TEST(TimeTest, OperatorLess)
+{
+    Time time("01:30");
+    EXPECT_TRUE(time < Time("01:31"));
+    EXPECT_FALSE(time < Time("01:29"));
+}
+
+TEST(TimeTest, OperatorGreater)
+{
+    Time time("01:30");
+    EXPECT_TRUE(time > Time("01:29"));
+    EXPECT_FALSE(time > Time("01:31"));
+}
+
+TEST(TimeTest, OperatorLessEqual)
+{
+    Time time("01:30");
+    EXPECT_TRUE(time  <= Time("01:30"));
+    EXPECT_TRUE(time  <= Time("01:31"));
+    EXPECT_FALSE(time <= Time("01:29"));
+}
+
+TEST(TimeTest, OperatorGreaterEqual)
+{
+    Time time("01:30");
+    EXPECT_TRUE(time  >= Time("01:30"));
+    EXPECT_TRUE(time  >= Time("01:29"));
+    EXPECT_FALSE(time >= Time("01:31"));
+}
