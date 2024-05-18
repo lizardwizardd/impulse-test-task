@@ -14,7 +14,7 @@ int main(int argc, char** argv)
     try
     {
         ComputerClub computerClub(argv[1]);
-        //ComputerClub computerClub("../../sample_input.txt");
+        //ComputerClub computerClub("../../input1_test.txt");
         computerClub.run();
     }
     catch(const ParseException& e)
@@ -24,7 +24,7 @@ int main(int argc, char** argv)
     }
     catch(const std::exception& e)
     {
-        std::cerr << "Uncaught exception: " << e.what() << '\n';
+        std::cerr << "Exception: " << e.what() << '\n';
     }
 
     return 0;

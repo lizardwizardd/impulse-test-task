@@ -70,14 +70,15 @@ void Table::clientOccupies(const Client& client, const Time& time)
 //
 
 ComputerClub::ComputerClub(const std::string& filename) :
-    file(filename),
-    buffer(file)
+    file(filename)
 {
     if (!file.is_open())
     {
         throw std::runtime_error("Error opening file '" + filename + "'. \n" +
                                  "Make sure the specified path is correct.");
     }
+
+    buffer = InputBuffer(file);
 
     try
     {
