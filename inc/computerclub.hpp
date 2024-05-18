@@ -3,32 +3,39 @@
 #include <string>
 #include <map>
 #include <fstream>
-#include <queue>
+#include <vector>
+#include <deque>
 
 #include "inputbuffer.hpp"
 #include "event.hpp"
 #include "mytime.hpp"
 
 
-class Client
+struct Client
 {
-public:
-    std::string name;
-    Time startTime;
+    std::string name = "";
+    unsigned int tableNumber = 0;
 
     Client() = default;
-    Client(const std::string& name, const Time& startTime = Time());
+    Client(const std::string& name, unsigned int tableNumber = 0);
 };
 
 
-class Table
+struct Table
 {
-public:
+    static unsigned int costPerHour;
+
     bool isOccupied = false;
-    Time currentClient;
-    Time startTime;
+    Client currentClient;
+    Time startTime; // время когда currentClient занял стол
     unsigned int revenue = 0;
-    unsigned int occupiedMinutes = 0;
+
+    // Освободить стол и подсчитать доход. Не изменяет client.tableNumber
+    void clientLeaves(const Time& time);
+
+    // На вход поступает клиент, не занимающий стол. После вызова функции, 
+    // client.tableNumber должно быть изменено на соответствующее значение
+    void clientOccupies(const Client& client, const Time& time);
 };
 
 
@@ -44,9 +51,9 @@ private:
     std::ifstream file;
     InputBuffer buffer;
 
-    std::vector<Table> tables;             // все столы
+    std::vector<Table> tables;             // все столы; нумерация с 1
     std::map<std::string, Client> clients; // все клиенты
-    std::queue<std::string> clientsQueue;  // клиенты в очереди
+    std::deque<std::string> clientsQueue;  // клиенты в очереди
 
     // Обрабатывает входящее событие. Возвращает тип исходящего события
     Event::Type handleEventIn(const Event& event);
@@ -56,7 +63,9 @@ private:
     Event::Type handleClientWaiting(const Event& event);
     Event::Type handleClientLeft(const Event& event);
 
-    void printError(const std::string& errorText);
+    void printError(const Time& time, const std::string& errorText);
+
+    bool isOpen(const Time& time);
 
 public:
     ComputerClub() = delete;
