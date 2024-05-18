@@ -23,29 +23,44 @@ Client::Client(const std::string& name, unsigned int tableNumber) :
 
 unsigned int Table::costPerHour = 0;
 
+bool Table::isOccupied() const
+{
+    return isOccupiedState;
+}
+
+unsigned int Table::getRevenue() const
+{
+    return revenue;
+}
+
+unsigned int Table::getTotalMins() const
+{
+    return totalMins;
+}
+
 void Table::clientLeaves(const Time& time)
 {
-    if (!isOccupied)
+    if (!isOccupied())
         throw std::logic_error("Can't leave an empty table.");
 
     unsigned int minsOccupied = Time(time - startTime).getMins();
     revenue += ((minsOccupied + 59) / 60) * Table::costPerHour;
     totalMins += minsOccupied;
 
-    isOccupied = false;
+    isOccupiedState = false;
     currentClient = Client();
     startTime = Time();
 }
 
 void Table::clientOccupies(const Client& client, const Time& time)
 {
-    if (isOccupied)
+    if (isOccupied())
         throw std::logic_error("Can't occupy a non-empty table.");
 
     if (client.tableNumber != 0)
         throw std::logic_error("Client already occupies a table.");
 
-    isOccupied = true;
+    isOccupiedState = true;
     currentClient = client;
     startTime = time;
 }
@@ -177,7 +192,7 @@ Event::Type ComputerClub::handleClientOccupiedTable(const Event& event)
     if (clients.find(event.getClientName()) == clients.end())
         return Event::Type::ERROR_CLIENT_UNKNOWN;
 
-    if (tables[event.getTableNumber()].isOccupied)
+    if (tables[event.getTableNumber()].isOccupied())
         return Event::Type::ERROR_PLACE_IS_BUSY;
 
     Client& client = clients.at(event.getClientName());
@@ -211,7 +226,7 @@ Event::Type ComputerClub::handleClientWaiting(const Event& event)
     // Проверить, если ли свободный стол
     for (unsigned int i = 1; i < tables.size(); i++)
     {
-        if (!tables[i].isOccupied)
+        if (!tables[i].isOccupied())
             return Event::Type::ERROR_CLIENT_CAN_NOT_WAIT;
     }
 
@@ -301,7 +316,7 @@ void ComputerClub::printTablesStats()
 {
     for (unsigned int i = 1; i < tables.size(); i++)
     {
-        std::cout << i << " " << tables[i].revenue << " " << Time(tables[i].totalMins) << '\n';
+        std::cout << i << " " << tables[i].getRevenue() << " " << Time(tables[i].getTotalMins()) << '\n';
     }
 }
 

@@ -21,15 +21,21 @@ struct Client
 };
 
 
-struct Table
+class Table
 {
-    static unsigned int costPerHour;
-
-    bool isOccupied = false;
+private:
+    bool isOccupiedState = false;
     Client currentClient;
     Time startTime; // время когда currentClient занял стол
     unsigned int revenue = 0;
     unsigned int totalMins = 0; // сколько минут был занят стол за день
+
+public:
+    static unsigned int costPerHour;
+    
+    unsigned int getRevenue() const;
+    unsigned int getTotalMins() const;
+    bool isOccupied() const;
 
     // Освободить стол и подсчитать доход. Не изменяет client.tableNumber
     void clientLeaves(const Time& time);
