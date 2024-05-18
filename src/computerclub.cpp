@@ -104,7 +104,9 @@ void ComputerClub::run()
         {
             case Event::Type::SUCCESS_NO_EVENT:
                 break;
-            case Event::Type::FREE_TABLE_QUEUE_NOT_EMPTY:
+            case Event::Type::TABLE_FREE_QUEUE_NOT_EMPTY:
+                occupyFromQueue(event);
+                event.print();
                 break;
             case Event::Type::ERROR_CLIENT_ALREADY_INSIDE:
                 printError(event.getEventTime(), "YouShallNotPass");
@@ -132,7 +134,7 @@ void ComputerClub::run()
 }
 
 
-Event::Type ComputerClub::handleEventIn(const Event& event)
+Event::Type ComputerClub::handleEventIn(Event& event)
 {
     switch (event.getEventType())
     {
@@ -209,15 +211,16 @@ Event::Type ComputerClub::handleClientWaiting(const Event& event)
     return Event::Type::SUCCESS_NO_EVENT;
 }
 
-Event::Type ComputerClub::handleClientLeft(const Event& event)
+Event::Type ComputerClub::handleClientLeft(Event& event)
 {
     if (clients.find(event.getClientName()) == clients.end())
         return Event::Type::ERROR_CLIENT_UNKNOWN;
 
     // Освободить стол
-    if (clients.at(event.getClientName()).tableNumber != 0)
+    unsigned int freeTableIndex = clients.at(event.getClientName()).tableNumber;
+    if (freeTableIndex != 0)
     {
-        tables[clients.at(event.getClientName()).tableNumber].clientLeaves(event.getEventTime());
+        tables[freeTableIndex].clientLeaves(event.getEventTime());
     }
 
     // Удалить из clients
@@ -229,8 +232,26 @@ Event::Type ComputerClub::handleClientLeft(const Event& event)
     }
     else
     {
-        return Event::Type::FREE_TABLE_QUEUE_NOT_EMPTY;
+        // Изменить event, чтобы упростить его обработку в occupyFromQueue и вывод в cout
+        event = Event(event.getEventTime(), Event::Type::TABLE_FREE_QUEUE_NOT_EMPTY,
+                      clientsQueue.front(), freeTableIndex);
+        return Event::Type::TABLE_FREE_QUEUE_NOT_EMPTY;
     }
+}
+
+void ComputerClub::occupyFromQueue(const Event& eventIn)
+{
+    if (clientsQueue.size() == 0)
+        throw std::logic_error("Clients queue is empty");
+    
+    std::string clientName = eventIn.getClientName();
+
+    // Занять освободившийся стол
+    Client& client = clients.at(clientName);
+    tables[eventIn.getTableNumber()].clientOccupies(client, eventIn.getEventTime());
+    client.tableNumber = eventIn.getTableNumber();
+
+    clientsQueue.pop_front();
 }
 
 void ComputerClub::printError(const Time& time, const std::string& errorText)

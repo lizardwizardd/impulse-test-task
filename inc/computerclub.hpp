@@ -55,14 +55,17 @@ private:
     std::map<std::string, Client> clients; // все клиенты
     std::deque<std::string> clientsQueue;  // клиенты в очереди
 
-    // Обрабатывает входящее событие. Возвращает тип исходящего события
-    Event::Type handleEventIn(const Event& event);
+    // Обрабатывает входящее событие. Возвращает тип исходящего события.
+    // event может быть изменен в результате обработки
+    Event::Type handleEventIn(Event& event);
 
     Event::Type handleClientEntered(const Event& event);
     Event::Type handleClientOccupiedTable(const Event& event);
     Event::Type handleClientWaiting(const Event& event);
-    Event::Type handleClientLeft(const Event& event);
+    Event::Type handleClientLeft(Event& event); // может изменить event
 
+    // На вход поступает событие с clientName из очереди
+    void occupyFromQueue(const Event& eventIn);
     void printError(const Time& time, const std::string& errorText);
 
     bool isOpen(const Time& time);

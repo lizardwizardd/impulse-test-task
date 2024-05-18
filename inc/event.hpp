@@ -16,7 +16,7 @@ public:
 
         SUCCESS_NO_EVENT = 10,            // завершено без исходящего события
         CLIENT_LEFT_END_OF_DAY = 11,      // конец дня или полная очередь
-        FREE_TABLE_QUEUE_NOT_EMPTY = 12,  // свободный стол при не пустой очереди
+        TABLE_FREE_QUEUE_NOT_EMPTY = 12,  // свободный стол при не пустой очереди
         ERROR = 13,                       // ошибка
 
         ERROR_CLIENT_ALREADY_INSIDE = 101, // клиент уже в очереди
