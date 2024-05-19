@@ -30,6 +30,7 @@ add_executable(tests
     test/test_event.cpp
     test/test_time.cpp
     test/test_buffer.cpp
+    test/test_computerclub.cpp
 )
 
 target_link_libraries(tests 
