@@ -55,7 +55,6 @@ private:
     Time closeTime;
     unsigned int costPerHour;
 
-    std::ifstream file;
     InputBuffer buffer;
 
     std::vector<Table> tables;             // все столы; нумерация с 1
@@ -83,8 +82,8 @@ private:
 
 public:
     ComputerClub() = delete;
-    ComputerClub(const std::string& filename);
-    ~ComputerClub();
+    ComputerClub(std::istream& inputStream); // получает валидный поток
+    ~ComputerClub() = default;
 
     void run();
 };

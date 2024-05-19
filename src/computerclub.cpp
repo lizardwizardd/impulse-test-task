@@ -69,17 +69,9 @@ void Table::clientOccupies(const Client& client, const Time& time)
 // COMPUTER CLUB
 //
 
-ComputerClub::ComputerClub(const std::string& filename) :
-    file(filename)
+ComputerClub::ComputerClub(std::istream& inputStream) :
+    buffer(inputStream)
 {
-    if (!file.is_open())
-    {
-        throw std::runtime_error("Error opening file '" + filename + "'. \n" +
-                                 "Make sure the specified path is correct.");
-    }
-
-    buffer = InputBuffer(file);
-
     try
     {
         buffer.readInputLine(); // количество столов
@@ -100,11 +92,6 @@ ComputerClub::ComputerClub(const std::string& filename) :
 
     Table::costPerHour = costPerHour;
     tables.resize(tablesCount + 1);
-}
-
-ComputerClub::~ComputerClub()
-{
-    file.close();
 }
 
 void ComputerClub::run()
