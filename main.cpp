@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "../inc/computerclub.hpp"
-#include "../inc/myexceptions.hpp"
+#include "inc/computerclub.hpp"
+#include "inc/myexceptions.hpp"
 
 int main(int argc, char** argv)
 {
