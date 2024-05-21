@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <exception>
+#include <deque>
+#include <string> 
 
 #include "../inc/mytime.hpp"
 #include "../inc/event.hpp"
@@ -177,7 +179,7 @@ Event::TypeOut ComputerClub::handleClientEntered(const Event& event)
 
 Event::TypeOut ComputerClub::handleClientOccupiedTable(const Event& event)
 {
-    if (event.getTableNumber() > tablesCount)
+    if (event.getTableNumber() > tablesCount || event.getTableNumber() < 1)
         throw ParseException("Table number out of range", buffer.getBuffer());
 
     if (clients.find(event.getClientName()) == clients.end())
@@ -232,17 +234,29 @@ Event::TypeOut ComputerClub::handleClientLeft(Event& event)
     if (clients.find(event.getClientName()) == clients.end())
         return Event::TypeOut::ERROR_CLIENT_UNKNOWN;
 
-    // Освободить стол
+    // Освободить стол или очередь.
     unsigned int freeTableIndex = clients.at(event.getClientName()).tableNumber;
+
     if (freeTableIndex != 0)
     {
         tables[freeTableIndex].clientLeaves(event.getEventTime());
     }
+    else // клент не зангимал стол. Удалить из очереди, если он есть в ней
+    {
+        for (auto it = clientsQueue.begin(); it != clientsQueue.end(); it++)
+        {
+            if (*it == event.getClientName())
+            {
+                clientsQueue.erase(it);
+                break;
+            }
+        }
+    }
 
-    // Удалить из clients
     clients.erase(event.getClientName());
 
-    if (clientsQueue.size() == 0)
+    // Если очередь пустая, или не освободился стол
+    if (clientsQueue.size() == 0 || freeTableIndex == 0)
     {
         return Event::TypeOut::SUCCESS_NO_EVENT;
     }

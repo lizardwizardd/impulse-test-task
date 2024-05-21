@@ -165,3 +165,42 @@ TEST(ComputerClubTest, UseCase3)
 
     EXPECT_EQ(expectedOutput, actualOutput);
 }
+
+TEST(ComputerClubTest, UseCase4_LeaveFromQueue)
+{
+    std::stringstream inputString(
+        "1\n"
+        "09:00 19:00\n"
+        "10\n"
+        "11:00 1 client1\n"
+        "11:05 2 client1 1\n"
+        "12:00 1 client2\n"
+        "12:05 3 client2\n"
+        "12:20 1 client3\n"
+        "12:25 3 client3 1\n"
+        "13:10 4 client2\n"
+        "13:55 4 client1\n"
+    );
+
+    std::string expectedOutput =
+        "09:00\n"
+        "11:00 1 client1\n"
+        "11:05 2 client1 1\n"
+        "12:00 1 client2\n"
+        "12:05 3 client2\n"
+        "12:20 1 client3\n"
+        "12:25 3 client3 1\n"
+        "13:10 4 client2\n"
+        "13:55 4 client1\n"
+        "13:55 12 client3 1\n"
+        "19:00 11 client3\n"
+        "19:00\n"
+        "1 90 07:55\n";
+
+    testing::internal::CaptureStdout();
+    ComputerClub computerClub(inputString);
+    computerClub.run();
+    std::string actualOutput = testing::internal::GetCapturedStdout();
+
+    EXPECT_EQ(expectedOutput, actualOutput);
+}
